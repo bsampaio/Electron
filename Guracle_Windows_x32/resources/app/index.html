@@ -18,7 +18,8 @@
  		@import url(http://fonts.googleapis.com/css?family=Alegreya);
 
 	    html, body, .container {
-	      height: 100%
+	      height: 100%;
+	      overflow: hidden;
 	    }
 	    body {
 	      background-repeat: no-repeat;
@@ -45,72 +46,7 @@
 	    }
   	</style>
 
-	<script type="text/javascript">
-	angular.module("Guracle",[]);
-	angular.module("Guracle").controller("QuotesController", function ($scope, $http){
-
-		$scope.app = "Guracle - Your daily source of motivation!";
-		$scope.icons = {
-		    shuffle: 'mdi-av-shuffle',
-		    quote: 'mdi-editor-format-quote',
-		    up: 'mdi-action-thumb-up',
-		    down: 'mdi-action-thumb-down'
-	  	}
-	  	$scope.loading = false;
-	  	$scope.img = {};
-
-		$scope.randomize = function (id) {
-	        $scope.loadImage();
-	        var url = "http://guracle.herokuapp.com/rest/randomize";
-	        $scope.loading = true;
-
-	        if (typeof id != 'undefined') {
-	          url = "http://guracle.herokuapp.com/rest/randomize/"+id;
-	    	};
-	        $http.get(url)
-	          .success(function (response) {
-	            $scope.quote = response;
-	            $scope.loading = false;
-	          })
-	          .error(function (response) {
-	            $scope.loading = false;
-	          });
-	  	}
-
-		$scope.vote = function (id, vote){
-		$scope.loading = true;
-		switch (vote) {
-		  case 'up'   : var url = 'http://guracle.herokuapp.com/rest/up/'+id; break;
-		  case 'down' : var url = 'http://guracle.herokuapp.com/rest/down/'+id; break;
-		  default     : break;
-		}
-
-		$http.post(url)
-		  .success(function (response) {
-		    $scope.loading = false;
-		    $scope.randomize(id);
-		  })
-		  .error(function (response) {
-		    $scope.loading = false;
-		    console.log(response);
-		    $scope.randomize(id);
-		  });
-		}
-
-		$scope.detectImgSize = function (){
-			$scope.img.height = $(document).height();
-			$scope.img.width  = $(document).width();
-		}
-
-		$scope.loadImage = function(){
-			$('body').css('background-image','none');
-			$('body').css('background-image','url(https://unsplash.it/'+$scope.img.width+'/'+$scope.img.height+'?random)');
-		}
-
-		$scope.detectImgSize();
-		$scope.randomize();
-	});
-	</script>
+	
 </head>
 <body ng-controller="QuotesController">
   <div id="quote-data" class="container valign-wrapper">
@@ -193,5 +129,72 @@
 	
 	<!-- Compiled and minified JavaScript -->
 	<script src="./js/materialize.js"></script>
+	<script type="text/javascript">
+	angular.module("Guracle",[]);
+	angular.module("Guracle").controller("QuotesController", function ($scope, $http){
+
+		$scope.app = "Guracle - Your daily source of motivation!";
+		$scope.icons = {
+		    shuffle: 'mdi-av-shuffle',
+		    quote: 'mdi-editor-format-quote',
+		    up: 'mdi-action-thumb-up',
+		    down: 'mdi-action-thumb-down'
+	  	}
+	  	$scope.loading = false;
+	  	$scope.img = {};
+
+		$scope.randomize = function (id) {
+	        $scope.loadImage();
+	        var url = "http://guracle.herokuapp.com/rest/randomize";
+	        $scope.loading = true;
+
+	        if (typeof id != 'undefined') {
+	          url = "http://guracle.herokuapp.com/rest/randomize/"+id;
+	    	};
+	        $http.get(url)
+	          .success(function (response) {
+	            $scope.quote = response;
+	            $scope.loading = false;
+	          })
+	          .error(function (response) {
+	            $scope.loading = false;
+	          });
+	  	}
+
+		$scope.vote = function (id, vote){
+		$scope.loading = true;
+		switch (vote) {
+		  case 'up'   : var url = 'http://guracle.herokuapp.com/rest/up/'+id; break;
+		  case 'down' : var url = 'http://guracle.herokuapp.com/rest/down/'+id; break;
+		  default     : break;
+		}
+
+		$http.post(url)
+		  .success(function (response) {
+		    $scope.loading = false;
+		    $scope.randomize(id);
+		  })
+		  .error(function (response) {
+		    $scope.loading = false;
+		    console.log(response);
+		    $scope.randomize(id);
+		  });
+		}
+
+		$scope.detectImgSize = function (){
+			$scope.img.height = $(document).height() * 0.85;
+			$scope.img.width  = $(document).width() * 0.85;
+		}
+
+		$scope.loadImage = function(){
+			$scope.detectImgSize();
+			var randomId = new Date().getTime();
+			$('body').css('background-image','none');
+			$('body').css('background-image','url(https://unsplash.it/'+$scope.img.width+'/'+$scope.img.height+'?random='+randomId+')');
+		}
+		
+		$scope.randomize();
+	});
+	</script>
 </body>
 </html>
